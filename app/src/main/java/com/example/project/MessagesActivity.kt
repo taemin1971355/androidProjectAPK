@@ -9,6 +9,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MessagesActivity : AppCompatActivity() {
 
@@ -26,7 +29,9 @@ class MessagesActivity : AppCompatActivity() {
 
         if (userEmail != null) {
             // 사용자의 이메일을 기반으로 메시지를 Firestore에서 가져오기
-            fetchMessages(userEmail, messagesListView)
+            GlobalScope.launch(Dispatchers.Main) {
+                fetchMessages(userEmail, messagesListView)
+            }
         }
     }
 

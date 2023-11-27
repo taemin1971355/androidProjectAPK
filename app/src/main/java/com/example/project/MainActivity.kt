@@ -19,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import com.example.project.MyFirebaseMessagingService.Companion.TAG
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
@@ -51,6 +52,7 @@ class MainActivity : AppCompatActivity() {
                     .addOnCompleteListener(this){
 
                         if(it.isSuccessful){
+                            updateFCMToken()
                             startActivity(Intent(this,ItemList::class.java))
                         }
                         else{
@@ -91,4 +93,21 @@ class MainActivity : AppCompatActivity() {
             requestPermLauncher.launch(permission)
         }
     }
+    private fun updateFCMToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                Log.d(TAG, "FCM Token: $token")
+                sendTokenToServer(token)
+            } else {
+                Log.w(TAG, "Fetching FCM token failed", task.exception)
+            }
+        }
+    }
+
+    private fun sendTokenToServer(token: String?) {
+        // TODO: Implement this method to send the FCM token to your app's server
+        // 서버에 토큰을 전송하는 코드를 작성하세요
+    }
+
 }

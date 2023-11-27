@@ -79,9 +79,30 @@ class ItemView: AppCompatActivity() {
         messagesRef.add(messageData)
             .addOnSuccessListener {
                 // 메시지 전송 성공
+                sendNotification(receiver, message)
             }
             .addOnFailureListener {
                 // 메시지 전송 실패
+            }
+    }
+    fun sendNotification(receiver: String, message: String) {
+        // FCM을 사용하여 상대방에게 알림 전송
+        // FCM 토큰을 이용하여 특정 기기에 메시지를 전송
+        // 자세한 내용은 Firebase Cloud Messaging 문서 참조
+        val notificationRef = FirebaseFirestore.getInstance().collection("notifications")
+
+        val notificationData = hashMapOf(
+            "receiver" to receiver,
+            "message" to message,
+            "timestamp" to FieldValue.serverTimestamp() // 메시지를 전송한 시간
+        )
+
+        notificationRef.add(notificationData)
+            .addOnSuccessListener {
+                // 알림 전송 성공
+            }
+            .addOnFailureListener {
+                // 알림 전송 실패
             }
     }
 
