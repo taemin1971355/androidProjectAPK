@@ -8,12 +8,14 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+
 
 class ItemList : AppCompatActivity() {
 
@@ -23,13 +25,18 @@ class ItemList : AppCompatActivity() {
 
     private val recyclerViewItems by lazy { findViewById<RecyclerView>(R.id.recyclerview) }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_itemlist)
 
+        //리싸이클러뷰 사이의 구분선
+        val dividerItemDecoration = DividerItemDecoration(this, LinearLayoutManager(this).orientation)
+        recyclerViewItems.addItemDecoration(dividerItemDecoration)
         recyclerViewItems.layoutManager = LinearLayoutManager(this)
         adapter = MyAdapter(this, emptyList())
         recyclerViewItems.adapter = adapter
+
 
         // Firestore에서 데이터 가져와서 어댑터에 설정
         fetchDataFromFirestore()
