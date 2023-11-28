@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 기본 앱 테마 -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- 다른 테마 속성들... -->
+        <item name="colorPrimary">#8BC34A</item>
+        <!-- EditText의 줄 색상 -->
+        <item name="colorControlNormal">#8BC34A</item>
+
+        <!-- EditText의 커서 색상 -->
+        <item name="colorControlActivated">#8BC34A</item>
+        <item name="textInputStyle">@style/MyTextInputLayoutStyle</item>
+    </style>
+    <style name="MyTextInputLayoutStyle" parent="Widget.Design.TextInputLayout">
+        <item name="android:textColorHint">#ADB5BD</item>
+    </style>
+</resources>
