@@ -1,13 +1,17 @@
 package com.example.project
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
+import org.w3c.dom.Document
 
 
 class MessagesActivity : AppCompatActivity() {
@@ -37,40 +41,78 @@ class MessagesActivity : AppCompatActivity() {
     private fun fetchMessages(userEmail: String, messagesListView: ListView) {
         val messagesRef = db.collection("messages")
 
-        // 현재 사용자가 수신자인 메시지를 쿼리
-        messagesRef
-            .whereEqualTo("receiver", userEmail)              //로그에서 링크타고 색인 추가해야만 동시에 사용가능
-            .orderBy("timestamp", Query.Direction.ASCENDING) //로그에서 링크타고 색인 추가해야만 동시에 사용가능
-            .get()
-            .addOnSuccessListener { result ->
+        messagesRef.get()
+            .addOnSuccessListener {
                 val messageList = mutableListOf<String>()
 
-                for (document in result) {
-                    val sender = document.getString("sender")
-                    val message = document.getString("message")
-
-                    if (sender != null && message != null) {
-                        val formattedMessage = "보낸 사람: $sender 메시지 : $message"
-                        messageList.add(formattedMessage)
+                for (i in it.documents){
+                    //document의 저장되는 이름이 구매자_판매자
+                    //_로 잘라서 비교
+                    //그 2개중에 한개라도 있으면
+                    if(userEmail == (i.id).split("_")[0]  ||userEmail == (i.id).split("_")[1]) {
+                        //잘린 부분 중 자신의 이름이 아닌 부분을 리스트에 추가
+                        val ChatTitle = if(userEmail == (i.id).split("_")[0]) (i.id).split("_")[1] +"님과의 채팅방"
+                                        else (i.id).split("_")[0]+"님과의 채팅방"
+                        messageList.add(ChatTitle)
                     }
                 }
-
-                // 가져온 메시지를 리스트뷰에 표시
                 val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, messageList)
                 messagesListView.adapter = adapter
+                messagesListView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+                    val text = (messageList.get(position).split("님과의 채팅방"))[0]
+                    Toast.makeText(this,"${text}", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, ChatRoom::class.java)
+                    intent.putExtra("userEmail", userEmail)
+                    intent.putExtra("otheruser", text)
+                    startActivity(intent)
+
+                }
             }
             .addOnFailureListener { exception ->
-                // 메시지 가져오기 실패 시 처리
-                // 예: Toast 메시지 출력 등
-                Log.e("Firebase", "데이터 가져오기 실패", exception)
-                exception?.printStackTrace() //다중 색인 추가를 위한 코드
-
+//                // 메시지 가져오기 실패 시 처리
+//                // 예: Toast 메시지 출력 등
+//                Log.e("Firebase", "데이터 가져오기 실패", exception)
+//                exception?.printStackTrace() //다중 색인 추가를 위한 코드
+//
             }
+
+
+
+        // 현재 사용자가 수신자인 메시지를 쿼리
+//        messagesRef
+//            .whereEqualTo("receiver", userEmail)              //로그에서 링크타고 색인 추가해야만 동시에 사용가능
+//            .orderBy("timestamp", Query.Direction.ASCENDING) //로그에서 링크타고 색인 추가해야만 동시에 사용가능
+//            .get()
+//            .addOnSuccessListener { result ->
+//                val messageList = mutableListOf<String>()
+//
+//                for (document in result) {
+//                    val sender = document.getString("sender")
+//                    val message = document.getString("message")
+//
+//                    if (sender != null && message != null) {
+//                        val formattedMessage = "보낸 사람: $sender \n메시지 : $message"
+//                        messageList.add(formattedMessage)
+//                    }
+//                }
+//
+//                // 가져온 메시지를 리스트뷰에 표시
+//                val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, messageList)
+//                messagesListView.adapter = adapter
+//            }
+//            .addOnFailureListener { exception ->
+//                // 메시지 가져오기 실패 시 처리
+//                // 예: Toast 메시지 출력 등
+//                Log.e("Firebase", "데이터 가져오기 실패", exception)
+//                exception?.printStackTrace() //다중 색인 추가를 위한 코드
+//
+//            }
     }
+
+
     private fun registerRealtimeUpdates(userEmail: String, messagesListView: ListView) {
         val messagesRef = db.collection("messages")
-            .whereEqualTo("receiver", userEmail)
-            .orderBy("timestamp", Query.Direction.ASCENDING)
+
 
         messagesRef.addSnapshotListener { snapshot, exception ->
             if (exception != null) {
@@ -83,19 +125,29 @@ class MessagesActivity : AppCompatActivity() {
             if (snapshot != null && !snapshot.isEmpty) {
                 val messageList = mutableListOf<String>()
 
-                for (document in snapshot) {
-                    val sender = document.getString("sender")
-                    val message = document.getString("message")
-
-                    if (sender != null && message != null) {
-                        val formattedMessage = "보낸 사람: $sender 메시지: $message"
-                        messageList.add(formattedMessage)
+                for (document in snapshot){
+                    //document의 저장되는 이름이 구매자_판매자
+                    //_로 잘라서 비교
+                    //그 2개중에 한개라도 있으면
+                    if(userEmail == (document.id).split("_")[0]  ||userEmail == (document.id).split("_")[1]) {
+                        //잘린 부분 중 자신의 이름이 아닌 부분을 리스트에 추가
+                        val ChatTitle = if(userEmail == (document.id).split("_")[0]) (document.id).split("_")[1] +"님과의 채팅방"
+                        else (document.id).split("_")[0]+"님과의 채팅방"
+                        messageList.add(ChatTitle)
                     }
                 }
 
                 // 업데이트된 메시지를 리스트뷰에 표시
                 val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, messageList)
                 messagesListView.adapter = adapter
+                messagesListView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+                    val text = "${userEmail}_" + (messageList.get(position).split("님과의 채팅방"))[0]
+                    Toast.makeText(this,"${text}", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, ChatRoom::class.java)
+                    intent.putExtra("userEmail", userEmail)
+                    intent.putExtra("document", text)
+                    startActivity(intent)
+                }
 
             }
         }

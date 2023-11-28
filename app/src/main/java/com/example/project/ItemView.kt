@@ -66,7 +66,7 @@ class ItemView: AppCompatActivity() {
 
     // 메시지 전송
     fun sendMessage(sender: String, receiver: String, message: String) {
-        val messagesRef = db.collection("messages")
+
 
         val messageData = hashMapOf(
             "sender" to sender,
@@ -74,8 +74,9 @@ class ItemView: AppCompatActivity() {
             "message" to message,
             "timestamp" to FieldValue.serverTimestamp() // 메시지를 전송한 시간
         )
-
-        messagesRef.add(messageData)
+        val path = if(sender.compareTo(receiver)> 0) "${sender}_${receiver}" else "${receiver}_${sender}"
+        db.collection("messages").document(path).collection(path).add(messageData)
+        //messagesRef.add(messageData)
             .addOnSuccessListener {
                 // 메시지 전송 성공
             }
