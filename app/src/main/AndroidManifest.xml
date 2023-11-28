@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
-    <meta-data
-        android:name="com.google.firebase.messaging.default_notification_channel_id"
-        android:value="firebase-messaging"/>
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -30,13 +25,6 @@
         <activity android:name=".ItemList"/>
         <activity android:name=".ItemView"/>
         <activity android:name=".MessagesActivity"/>
-        <service
-            android:name=".MyFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
-        </service>
 
     </application>
 

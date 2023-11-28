@@ -1,24 +1,14 @@
 package com.example.project
-
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+
 
 class MessagesActivity : AppCompatActivity() {
 
@@ -107,44 +97,10 @@ class MessagesActivity : AppCompatActivity() {
                 val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, messageList)
                 messagesListView.adapter = adapter
 
-                // 푸시 알림 표시
-                showNotification(messageList)
             }
         }
     }
-    private fun showNotification(messageList: List<String>) {
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val channelId = "MyChannelId"
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                "MyChannel",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
-
-        val builder = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("새로운 메시지 도착!")
-            .setContentText("새로운 메시지가 도착했습니다.")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setAutoCancel(true)
-
-        // 푸시 알림을 누르면 앱이 열리도록 PendingIntent 설정
-        val intent = Intent(this, MessagesActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            0,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        builder.setContentIntent(pendingIntent)
-
-        // 푸시 알림 표시
-        val notificationId = System.currentTimeMillis().toInt()
-        notificationManager.notify(notificationId, builder.build())
-    }
 
 
 }
