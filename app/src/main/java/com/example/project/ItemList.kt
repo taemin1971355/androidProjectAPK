@@ -1,4 +1,5 @@
 package com.example.project
+
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -15,7 +16,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-
 class ItemList : AppCompatActivity() {
 
     private var adapter: MyAdapter? = null
@@ -24,18 +24,16 @@ class ItemList : AppCompatActivity() {
 
     private val recyclerViewItems by lazy { findViewById<RecyclerView>(R.id.recyclerview) }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_itemlist)
 
-        //리싸이클러뷰 사이의 구분선
+        // 리싸이클러뷰 사이의 구분선
         val dividerItemDecoration = DividerItemDecoration(this, LinearLayoutManager(this).orientation)
         recyclerViewItems.addItemDecoration(dividerItemDecoration)
         recyclerViewItems.layoutManager = LinearLayoutManager(this)
         adapter = MyAdapter(this, emptyList())
         recyclerViewItems.adapter = adapter
-
 
         // Firestore에서 데이터 가져와서 어댑터에 설정
         fetchDataFromFirestore()
@@ -54,7 +52,6 @@ class ItemList : AppCompatActivity() {
                     intent.putExtra("status", item.status)
                     startActivity(intent)
                 } else {
-
                     val intent = Intent(this, ItemView::class.java)
                     intent.putExtra("itemId", item.id)
                     intent.putExtra("title", item.title)
@@ -63,19 +60,29 @@ class ItemList : AppCompatActivity() {
                     intent.putExtra("user", item.user)
                     intent.putExtra("status", item.status)
                     startActivity(intent)
-
                 }
             }
         }
+
         initializeSpinner()
-        findViewById<Button>(R.id.create).setOnClickListener(){
-            startActivity(Intent(this,ItemCreate::class.java))
+
+        findViewById<Button>(R.id.create).setOnClickListener() {
+            startActivity(Intent(this, ItemCreate::class.java))
         }
-        findViewById<Button>(R.id.showMessage).setOnClickListener(){
+
+        findViewById<Button>(R.id.showMessage).setOnClickListener() {
             startActivity(Intent(this, MessagesActivity::class.java))
         }
 
+        // 로그아웃 버튼 처리
+        findViewById<Button>(R.id.logOut).setOnClickListener() {
+            Firebase.auth.signOut()
+            // 로그아웃 후 로그인 화면으로 이동
+            startActivity(Intent(this, MainActivity::class.java))
+            finish() // 현재 액티비티를 종료하여 뒤로가기 버튼을 눌렀을 때 목록 화면이 나오지 않도록 함
+        }
     }
+
     private fun initializeSpinner() {
         // Spinner에 연결할 데이터 배열
         val filterOptions = arrayOf("전체", "판매중", "판매완료")
@@ -107,13 +114,12 @@ class ItemList : AppCompatActivity() {
         }
     }
 
-
-
     override fun onResume() {
         super.onResume()
         // 다른 액티비티에서 돌아왔을 때 리사이클러뷰를 업데이트
         fetchDataFromFirestore()
     }
+
     private fun fetchDataFromFirestore() {
         itemsCollectionRef.get()
             .addOnSuccessListener { result ->
@@ -128,9 +134,7 @@ class ItemList : AppCompatActivity() {
             }
     }
 
-
-
-    private fun queryWhere(status:String) {
+    private fun queryWhere(status: String) {
         itemsCollectionRef.whereEqualTo("status", status).get()
             .addOnSuccessListener { result ->
                 val itemList = mutableListOf<Item>()
@@ -143,7 +147,4 @@ class ItemList : AppCompatActivity() {
                 // Firestore에서 데이터를 가져오는데 실패한 경우 처리
             }
     }
-
-
-
 }

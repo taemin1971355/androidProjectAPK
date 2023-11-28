@@ -5,14 +5,24 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        auth = Firebase.auth
+
+        if (auth.currentUser != null) {
+            // 이미 로그인된 경우
+            startItemListActivity()
+        }
+
         findViewById<Button>(R.id.login).setOnClickListener(){
             var login = findViewById<EditText>(R.id.id_edit).text
             var pwd = findViewById<EditText>(R.id.pwd_edit).text
@@ -21,7 +31,7 @@ class MainActivity : AppCompatActivity() {
                     .addOnCompleteListener(this){
 
                         if(it.isSuccessful){
-                            startActivity(Intent(this,ItemList::class.java))
+                            startItemListActivity()
                         }
                         else{
                             Toast.makeText(this, "아이디 or 패스워드 오류!", Toast.LENGTH_SHORT).show()
@@ -38,7 +48,10 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-
+    private fun startItemListActivity() {
+        startActivity(Intent(this, ItemList::class.java))
+        finish()
+    }
 
 
 }
