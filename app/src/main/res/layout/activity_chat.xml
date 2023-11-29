@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".ChatRoom">
 
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="317dp"
+        android:text="Button" />
+
     <ListView
         android:id="@+id/chatListView"
         android:layout_width="match_parent"
