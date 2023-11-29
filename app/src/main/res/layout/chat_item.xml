@@ -34,13 +34,13 @@
 
         <TextView
             android:id="@+id/textMessage"
-            android:layout_width="140dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:ellipsize="end"
+            android:singleLine="false"
             android:text="TextView"
-            android:textSize="15sp"
-            android:singleLine="true"
-            android:ellipsize="end" />
+            android:textSize="15sp" />
 
     </LinearLayout>
 </LinearLayout>
