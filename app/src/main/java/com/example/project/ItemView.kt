@@ -79,10 +79,19 @@ class ItemView: AppCompatActivity() {
         //messagesRef.add(messageData)
             .addOnSuccessListener {
                 // 메시지 전송 성공
+                db.collection("messages").document(path).set(hashMapOf("room" to path))
+                    //messagesRef.add(messageData)
+                    .addOnSuccessListener {
+                        // 메시지 전송 성공
+                    }
+                    .addOnFailureListener {
+                        // 메시지 전송 실패
+                    }
             }
             .addOnFailureListener {
                 // 메시지 전송 실패
             }
+
     }
 
 }
