@@ -17,14 +17,14 @@
         <TextView
             android:id="@+id/textTitle"
             android:layout_width="59dp"
-            android:layout_height="30dp"
+            android:layout_height="40dp"
             android:layout_weight="1"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:text="TextView"
             android:textColor="#000000"
             android:textSize="25sp"
-            android:textStyle="bold"
-            android:singleLine="true"
-            android:ellipsize="end" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textStatus"
