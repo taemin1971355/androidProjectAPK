@@ -5,21 +5,24 @@ import android.util.Log
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 
 class MessagesActivity : AppCompatActivity() {
 
-    private val db = FirebaseFirestore.getInstance()
+    private val db : FirebaseFirestore = Firebase.firestore
     private val auth = Firebase.auth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
-
         val messagesListView: ListView = findViewById(R.id.messagesListView)
 
         // 현재 로그인한 사용자의 이메일 가져오기
@@ -28,28 +31,30 @@ class MessagesActivity : AppCompatActivity() {
         if (userEmail != null) {
             // 사용자의 이메일을 기반으로 메시지를 Firestore에서 가져오기
 
-                fetchMessages(userEmail, messagesListView)
-
+            fetchMessages(userEmail, messagesListView)
             // Firestore에서 실시간 업데이트를 감지하는 리스너 등록
-            registerRealtimeUpdates(userEmail, messagesListView)
+            registerRealtimeUpdates(userEmail.toString(), messagesListView)
         }
+
     }
 
     private fun fetchMessages(userEmail: String, messagesListView: ListView) {
         val messagesRef = db.collection("messages")
-
-        messagesRef.get()
+        messagesRef
+            .get()
             .addOnSuccessListener {
                 val messageList = mutableListOf<String>()
+                Log.d("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", "${it}")
 
                 for (i in it.documents){
+                    Log.d("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", i.data.toString())
                     //document의 저장되는 이름이 구매자_판매자
                     //_로 잘라서 비교
-                    //그 2개중에 한개라도 있으면 채팅방 가져옴
+                    //그 2개중에 한개라도 있으면
                     if(userEmail == (i.id).split("_")[0]  ||userEmail == (i.id).split("_")[1]) {
                         //잘린 부분 중 자신의 이름이 아닌 부분을 리스트에 추가
                         val ChatTitle = if(userEmail == (i.id).split("_")[0]) (i.id).split("_")[1] +"님과의 채팅방"
-                                        else (i.id).split("_")[0]+"님과의 채팅방"
+                        else (i.id).split("_")[0]+"님과의 채팅방"
                         messageList.add(ChatTitle)
                     }
                 }
@@ -57,7 +62,7 @@ class MessagesActivity : AppCompatActivity() {
                 messagesListView.adapter = adapter
                 messagesListView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
                     val text = (messageList.get(position).split("님과의 채팅방"))[0]
-                    //Toast.makeText(this,"뭐야 ${text}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"${text}", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, ChatRoom::class.java)
                     intent.putExtra("userEmail", userEmail)
                     intent.putExtra("otheruser", text)
@@ -72,8 +77,6 @@ class MessagesActivity : AppCompatActivity() {
 //                exception?.printStackTrace() //다중 색인 추가를 위한 코드
 //
             }
-
-
     }
 
 
@@ -96,11 +99,13 @@ class MessagesActivity : AppCompatActivity() {
                     //document의 저장되는 이름이 구매자_판매자
                     //_로 잘라서 비교
                     //그 2개중에 한개라도 있으면
-                    if(userEmail == (document.id).split("_")[0]  ||userEmail == (document.id).split("_")[1]) {
-                        //잘린 부분 중 자신의 이름이 아닌 부분을 리스트에 추가
-                        val ChatTitle = if(userEmail == (document.id).split("_")[0]) (document.id).split("_")[1] +"님과의 채팅방"
-                        else (document.id).split("_")[0]+"님과의 채팅방"
-                        messageList.add(ChatTitle)
+                    if(document != null){
+                        if(userEmail == (document.id).split("_")[0]  ||userEmail == (document.id).split("_")[1]) {
+                            //잘린 부분 중 자신의 이름이 아닌 부분을 리스트에 추가
+                            val ChatTitle = if(userEmail == (document.id).split("_")[0]) (document.id).split("_")[1] +"님과의 채팅방"
+                            else (document.id).split("_")[0]+"님과의 채팅방"
+                            messageList.add(ChatTitle)
+                        }
                     }
                 }
                 // 업데이트된 메시지를 리스트뷰에 표시

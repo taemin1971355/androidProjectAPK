@@ -25,6 +25,7 @@ class ChatRoom: AppCompatActivity() {
         recyclerViewItems.adapter = adapter
 
 
+
         //사용자 id와 채팅방의 다른 이용자 아이디 받아옴.
         val otheruser = intent.getStringExtra("otheruser")
         val userEmail = intent.getStringExtra("userEmail")
@@ -34,7 +35,7 @@ class ChatRoom: AppCompatActivity() {
             val messageData = hashMapOf(
                 "sender" to userEmail.toString(),
                 "receiver" to otheruser.toString(),
-                "message" to findViewById<EditText>(R.id.sendChatMsg).text,
+                "message" to (findViewById<EditText>(R.id.sendChatMsg).text).toString(),
                 "timestamp" to FieldValue.serverTimestamp() // 메시지를 전송한 시간
             )
             val path = if((userEmail.toString()).compareTo(otheruser.toString())> 0) "${userEmail}_${otheruser}" else "${otheruser}_${userEmail}"
@@ -43,6 +44,15 @@ class ChatRoom: AppCompatActivity() {
                     //messagesRef.add(messageData)
                     .addOnSuccessListener {
                         // 메시지 전송 성공
+                        db.collection("messages").document(path).set(hashMapOf("room" to path))
+                            //messagesRef.add(messageData)
+                            .addOnSuccessListener {
+                                // 메시지 전송 성공
+                                findViewById<EditText>(R.id.sendChatMsg).setText(null)
+                            }
+                            .addOnFailureListener {
+                                // 메시지 전송 실패
+                            }
                     }
                     .addOnFailureListener {
                         // 메시지 전송 실패
@@ -53,13 +63,13 @@ class ChatRoom: AppCompatActivity() {
         if (userEmail != null) {
             // 사용자의 이메일을 기반으로 메시지를 Firestore에서 가져오기
 
-            fetchMessages(userEmail, otheruser.toString())
+            fetchChat(userEmail, otheruser.toString())
 
             // Firestore에서 실시간 업데이트를 감지하는 리스너 등록
             registerRealtimeUpdates(userEmail,otheruser.toString())
         }
     }
-    private fun fetchMessages(userEmail: String,otheruser: String) {
+    private fun fetchChat(userEmail: String,otheruser: String) {
         //채팅방에 있는 사람들(사용자id, 채팅 주고 받은 사용자)을
         //사전순서로 해서 _로 연결해서 String 만듬
         //만든 String으로 해당하는 message collection에서 document와 collection에 접속
@@ -74,15 +84,14 @@ class ChatRoom: AppCompatActivity() {
             .addOnSuccessListener { result ->
                 val chatlist = mutableListOf<Chat>()
                 for (document in result) {
-                        val sender = document.getString("sender")
-                        val receiver = document.getString("receiver")
-                        val message = document.getString("message")
+                    val sender = document.getString("sender")
+                    val receiver = document.getString("receiver")
+                    val message = document.getString("message")
 
-                        if (sender != null && message != null) {
-                            //누가 보냈는지에 따라 fomatted의 String 변경
-                            val formattedMessage = if(userEmail == sender)"내가 : ${sender}에게 \n메시지 : $message" else "${sender}가 나에게 \n메시지 : $message"
-                            chatlist.add(Chat(document))
-                        }
+                    if (sender != null && message != null) {
+                        //누가 보냈는지에 따라 fomatted의 String 변경
+                        chatlist.add(Chat(document))
+                    }
                 }
                 adapter?.updateList(chatlist)
             }
@@ -101,30 +110,33 @@ class ChatRoom: AppCompatActivity() {
         val path = if(userEmail.compareTo(otheruser)> 0) "${userEmail}_${otheruser}" else "${otheruser}_${userEmail}"
         val messagesRef = db.collection("messages").document(path).collection(path)
 
-        messagesRef.addSnapshotListener { snapshot, exception ->
-            if (exception != null) {
-                // 오류 처리
-                Log.e("Firebase", "채팅방 실시간 업데이트 실패", exception)
-                return@addSnapshotListener
-            }
+        messagesRef
+            .orderBy("timestamp", Query.Direction.ASCENDING)
+            .addSnapshotListener { snapshot, exception ->
+                if (exception != null) {
+                    // 오류 처리
+                    Log.e("Firebase", "채팅방 실시간 업데이트 실패", exception)
+                    return@addSnapshotListener
+                }
 
-            // 실시간 업데이트가 발생했을 때 처리
-            if (snapshot != null && !snapshot.isEmpty) {
-                val chatlist = mutableListOf<Chat>()
+                // 실시간 업데이트가 발생했을 때 처리
+                if (snapshot != null && !snapshot.isEmpty) {
+                    val chatlist = mutableListOf<Chat>()
 
-                for (document in snapshot) {
-                    val sender = document.getString("sender")
-                    val message = document.getString("message")
+                    for (document in snapshot) {
+                        val sender = document.getString("sender")
+                        val message = document.getString("message")
 
-                    if (sender != null && message != null) {
-                        val formattedMessage = "보낸 사람: $sender \n메시지 : $message"
-                        chatlist.add(Chat(document))
+                        if (sender != null && message != null) {
+                            chatlist.add(Chat(document))
+                        }
+                    }
+                    adapter?.updateList(chatlist)
+                    recyclerViewItems.layoutManager = LinearLayoutManager(this).apply {
+                        this.stackFromEnd = true
                     }
                 }
-                adapter?.updateList(chatlist)
-
-                }
 
             }
-        }
     }
+}
