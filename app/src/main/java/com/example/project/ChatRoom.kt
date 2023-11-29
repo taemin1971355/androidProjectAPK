@@ -41,7 +41,7 @@ class ChatRoom: AppCompatActivity() {
             val path = if((userEmail.toString()).compareTo(otheruser.toString())> 0) "${userEmail}_${otheruser}" else "${otheruser}_${userEmail}"
             if((findViewById<EditText>(R.id.sendChatMsg).text).toString() != "") {
                 db.collection("messages").document(path).collection(path).add(messageData)
-                    //messagesRef.add(messageData)
+                    // messagesRef.add(messageData)
                     .addOnSuccessListener {
                         // 메시지 전송 성공
                         db.collection("messages").document(path).set(hashMapOf("room" to path))
