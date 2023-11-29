@@ -22,7 +22,7 @@ class ItemList : AppCompatActivity() {
     private val db: FirebaseFirestore = Firebase.firestore
     private val itemsCollectionRef = db.collection("items")
 
-    private val recyclerViewItems by lazy { findViewById<RecyclerView>(R.id.recyclerview) }
+    private val recyclerViewItems by lazy { findViewById<RecyclerView>(R.id.Chatrecyclerview) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

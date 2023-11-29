@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.*
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
@@ -11,7 +12,6 @@ import com.google.firebase.ktx.Firebase
 
 class ChatRoom: AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
-    private val auth = Firebase.auth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
@@ -20,7 +20,28 @@ class ChatRoom: AppCompatActivity() {
         val otheruser = intent.getStringExtra("otheruser")
         val userEmail = intent.getStringExtra("userEmail")
 
-        val messagesListView: ListView = findViewById(R.id.chatListView)
+        val messagesListView: ListView = findViewById(R.id.Chatrecyclerview)
+
+        findViewById<Button>(R.id.sendMessage).setOnClickListener {
+            val messageData = hashMapOf(
+                "sender" to userEmail.toString(),
+                "receiver" to otheruser.toString(),
+                "message" to findViewById<EditText>(R.id.sendChatMsg).text,
+                "timestamp" to FieldValue.serverTimestamp() // 메시지를 전송한 시간
+            )
+            val path = if((userEmail.toString()).compareTo(otheruser.toString())> 0) "${userEmail}_${otheruser}" else "${otheruser}_${userEmail}"
+            if(findViewById<EditText>(R.id.sendChatMsg).text != null) {
+                db.collection("messages").document(path).collection(path).add(messageData)
+                    //messagesRef.add(messageData)
+                    .addOnSuccessListener {
+                        // 메시지 전송 성공
+                    }
+                    .addOnFailureListener {
+                        // 메시지 전송 실패
+                    }
+            }
+        }
+
         if (userEmail != null) {
             // 사용자의 이메일을 기반으로 메시지를 Firestore에서 가져오기
 
