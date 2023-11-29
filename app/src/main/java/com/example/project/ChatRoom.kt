@@ -39,7 +39,7 @@ class ChatRoom: AppCompatActivity() {
                 "timestamp" to FieldValue.serverTimestamp() // 메시지를 전송한 시간
             )
             val path = if((userEmail.toString()).compareTo(otheruser.toString())> 0) "${userEmail}_${otheruser}" else "${otheruser}_${userEmail}"
-            if(findViewById<EditText>(R.id.sendChatMsg).text != null) {
+            if((findViewById<EditText>(R.id.sendChatMsg).text).toString() != "") {
                 db.collection("messages").document(path).collection(path).add(messageData)
                     //messagesRef.add(messageData)
                     .addOnSuccessListener {
