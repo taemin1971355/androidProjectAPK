@@ -3,6 +3,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
@@ -14,11 +15,12 @@ import com.google.firebase.ktx.Firebase
 class ChatRoom: AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
     private var adapter: ChatAdapter? = null
-    private val recyclerViewItems by lazy { findViewById<RecyclerView>(R.id.Itemrecyclerview) }
+    private val recyclerViewItems by lazy { findViewById<RecyclerView>(R.id.Chatrecyclerview) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
+        recyclerViewItems.layoutManager = LinearLayoutManager(this)
         adapter = ChatAdapter(this, emptyList())
         recyclerViewItems.adapter = adapter
 

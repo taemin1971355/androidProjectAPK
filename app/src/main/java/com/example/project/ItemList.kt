@@ -31,6 +31,7 @@ class ItemList : AppCompatActivity() {
         // 리싸이클러뷰 사이의 구분선
         val dividerItemDecoration = DividerItemDecoration(this, LinearLayoutManager(this).orientation)
         recyclerViewItems.addItemDecoration(dividerItemDecoration)
+
         recyclerViewItems.layoutManager = LinearLayoutManager(this)
         adapter = MyAdapter(this, emptyList())
         recyclerViewItems.adapter = adapter
