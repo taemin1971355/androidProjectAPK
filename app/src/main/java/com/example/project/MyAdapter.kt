@@ -57,7 +57,7 @@ class MyAdapter(private val context: Context, private var items: List<Item>)
         val item = items[position]
 
         holder.view.findViewById<TextView>(R.id.textTitle).text = item.title
-        holder.view.findViewById<TextView>(R.id.textPrice).text = item.price.toString()
+        holder.view.findViewById<TextView>(R.id.textPrice).text = "${item.price.toString()}원"
 
         holder.view.findViewById<TextView>(R.id.textUser).text = item.user
         holder.view.findViewById<TextView>(R.id.textStatus).text = item.status
