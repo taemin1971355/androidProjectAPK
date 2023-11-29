@@ -84,14 +84,14 @@ class ChatRoom: AppCompatActivity() {
             .addOnSuccessListener { result ->
                 val chatlist = mutableListOf<Chat>()
                 for (document in result) {
-                        val sender = document.getString("sender")
-                        val receiver = document.getString("receiver")
-                        val message = document.getString("message")
+                    val sender = document.getString("sender")
+                    val receiver = document.getString("receiver")
+                    val message = document.getString("message")
 
-                        if (sender != null && message != null) {
-                            //누가 보냈는지에 따라 fomatted의 String 변경
-                            chatlist.add(Chat(document))
-                        }
+                    if (sender != null && message != null) {
+                        //누가 보냈는지에 따라 fomatted의 String 변경
+                        chatlist.add(Chat(document))
+                    }
                 }
                 adapter?.updateList(chatlist)
             }
@@ -113,30 +113,30 @@ class ChatRoom: AppCompatActivity() {
         messagesRef
             .orderBy("timestamp", Query.Direction.ASCENDING)
             .addSnapshotListener { snapshot, exception ->
-            if (exception != null) {
-                // 오류 처리
-                Log.e("Firebase", "채팅방 실시간 업데이트 실패", exception)
-                return@addSnapshotListener
-            }
+                if (exception != null) {
+                    // 오류 처리
+                    Log.e("Firebase", "채팅방 실시간 업데이트 실패", exception)
+                    return@addSnapshotListener
+                }
 
-            // 실시간 업데이트가 발생했을 때 처리
-            if (snapshot != null && !snapshot.isEmpty) {
-                val chatlist = mutableListOf<Chat>()
+                // 실시간 업데이트가 발생했을 때 처리
+                if (snapshot != null && !snapshot.isEmpty) {
+                    val chatlist = mutableListOf<Chat>()
 
-                for (document in snapshot) {
-                    val sender = document.getString("sender")
-                    val message = document.getString("message")
+                    for (document in snapshot) {
+                        val sender = document.getString("sender")
+                        val message = document.getString("message")
 
-                    if (sender != null && message != null) {
-                        chatlist.add(Chat(document))
+                        if (sender != null && message != null) {
+                            chatlist.add(Chat(document))
+                        }
+                    }
+                    adapter?.updateList(chatlist)
+                    recyclerViewItems.layoutManager = LinearLayoutManager(this).apply {
+                        this.stackFromEnd = true
                     }
                 }
-                adapter?.updateList(chatlist)
-                recyclerViewItems.layoutManager = LinearLayoutManager(this).apply {
-                    this.stackFromEnd = true
-                }
-                }
 
             }
-        }
     }
+}

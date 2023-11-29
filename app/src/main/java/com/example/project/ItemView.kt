@@ -15,8 +15,8 @@ import com.google.firebase.ktx.Firebase
 class ItemView: AppCompatActivity() {
     private val db: FirebaseFirestore = Firebase.firestore
     override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_itemview)
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_itemview)
 
         // Intent에서 데이터 추출
         val itemId = intent.getStringExtra("itemId")
@@ -36,8 +36,8 @@ class ItemView: AppCompatActivity() {
         findViewById<Button>(R.id.message_send).setOnClickListener()
         {                   // 메시지 전송 예시
             showSendMessageDialog()
-           }
-}
+        }
+    }
     private fun showSendMessageDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_message_input, null)
         val editTextMessage = dialogView.findViewById<EditText>(R.id.editTextMessage)
@@ -76,7 +76,7 @@ class ItemView: AppCompatActivity() {
         )
         val path = if(sender.compareTo(receiver)> 0) "${sender}_${receiver}" else "${receiver}_${sender}"
         db.collection("messages").document(path).collection(path).add(messageData)
-        //messagesRef.add(messageData)
+            //messagesRef.add(messageData)
             .addOnSuccessListener {
                 // 메시지 전송 성공
                 db.collection("messages").document(path).set(hashMapOf("room" to path))
