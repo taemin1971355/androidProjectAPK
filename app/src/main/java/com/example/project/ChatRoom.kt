@@ -3,6 +3,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -12,15 +13,20 @@ import com.google.firebase.ktx.Firebase
 
 class ChatRoom: AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
+    private var adapter: ChatAdapter? = null
+    private val recyclerViewItems by lazy { findViewById<RecyclerView>(R.id.Itemrecyclerview) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
+
+        adapter = ChatAdapter(this, emptyList())
+        recyclerViewItems.adapter = adapter
+
 
         //사용자 id와 채팅방의 다른 이용자 아이디 받아옴.
         val otheruser = intent.getStringExtra("otheruser")
         val userEmail = intent.getStringExtra("userEmail")
 
-        val messagesListView: ListView = findViewById(R.id.Chatrecyclerview)
 
         findViewById<Button>(R.id.sendMessage).setOnClickListener {
             val messageData = hashMapOf(
@@ -45,13 +51,13 @@ class ChatRoom: AppCompatActivity() {
         if (userEmail != null) {
             // 사용자의 이메일을 기반으로 메시지를 Firestore에서 가져오기
 
-            fetchMessages(userEmail, otheruser.toString() ,messagesListView)
+            fetchMessages(userEmail, otheruser.toString())
 
             // Firestore에서 실시간 업데이트를 감지하는 리스너 등록
-            registerRealtimeUpdates(userEmail,otheruser.toString(),messagesListView)
+            registerRealtimeUpdates(userEmail,otheruser.toString())
         }
     }
-    private fun fetchMessages(userEmail: String,otheruser: String ,messagesListView: ListView) {
+    private fun fetchMessages(userEmail: String,otheruser: String) {
         //채팅방에 있는 사람들(사용자id, 채팅 주고 받은 사용자)을
         //사전순서로 해서 _로 연결해서 String 만듬
         //만든 String으로 해당하는 message collection에서 document와 collection에 접속
@@ -64,7 +70,7 @@ class ChatRoom: AppCompatActivity() {
             .orderBy("timestamp", Query.Direction.ASCENDING)
             .get()
             .addOnSuccessListener { result ->
-                val chatlist = mutableListOf<String>()
+                val chatlist = mutableListOf<Chat>()
                 for (document in result) {
                         val sender = document.getString("sender")
                         val receiver = document.getString("receiver")
@@ -73,11 +79,10 @@ class ChatRoom: AppCompatActivity() {
                         if (sender != null && message != null) {
                             //누가 보냈는지에 따라 fomatted의 String 변경
                             val formattedMessage = if(userEmail == sender)"내가 : ${sender}에게 \n메시지 : $message" else "${sender}가 나에게 \n메시지 : $message"
-                            chatlist.add(formattedMessage)
+                            chatlist.add(Chat(document))
                         }
                 }
-                val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, chatlist)
-                messagesListView.adapter = adapter
+                adapter?.updateList(chatlist)
             }
             .addOnFailureListener { exception ->
                 // 메시지 가져오기 실패 시 처리
@@ -89,7 +94,7 @@ class ChatRoom: AppCompatActivity() {
     }
 
 
-    private fun registerRealtimeUpdates(userEmail: String,otheruser: String ,messagesListView: ListView) {
+    private fun registerRealtimeUpdates(userEmail: String,otheruser: String) {
         //fetchMessages 함수와 비슷한 원리
         val path = if(userEmail.compareTo(otheruser)> 0) "${userEmail}_${otheruser}" else "${otheruser}_${userEmail}"
         val messagesRef = db.collection("messages").document(path).collection(path)
@@ -103,7 +108,7 @@ class ChatRoom: AppCompatActivity() {
 
             // 실시간 업데이트가 발생했을 때 처리
             if (snapshot != null && !snapshot.isEmpty) {
-                val chatlist = mutableListOf<String>()
+                val chatlist = mutableListOf<Chat>()
 
                 for (document in snapshot) {
                     val sender = document.getString("sender")
@@ -111,11 +116,11 @@ class ChatRoom: AppCompatActivity() {
 
                     if (sender != null && message != null) {
                         val formattedMessage = "보낸 사람: $sender \n메시지 : $message"
-                        chatlist.add(formattedMessage)
+                        chatlist.add(Chat(document))
                     }
                 }
-                val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, chatlist)
-                messagesListView.adapter = adapter
+                adapter?.updateList(chatlist)
+
                 }
 
             }

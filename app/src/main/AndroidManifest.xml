@@ -26,7 +26,6 @@
         <activity android:name=".ItemView"/>
         <activity android:name=".MessagesActivity"/>
         <activity android:name=".ChatRoom"/>
-
     </application>
 
 </manifest>
