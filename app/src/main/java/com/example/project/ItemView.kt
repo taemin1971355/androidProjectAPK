@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.ktx.auth
@@ -54,6 +55,8 @@ class ItemView: AppCompatActivity() {
                     val message = editTextMessage.text.toString()
                     if (message.isNotEmpty()) {
                         sendMessage(userId, receiver, message)
+                    } else {
+                        Toast.makeText(this, "메시지를 입력하세요.", Toast.LENGTH_SHORT).show()
 
                     }
                 }
@@ -83,9 +86,11 @@ class ItemView: AppCompatActivity() {
                     //messagesRef.add(messageData)
                     .addOnSuccessListener {
                         // 메시지 전송 성공
+                        Toast.makeText(this, "메시지 전송에 성공하였습니다. 전체 메시지를 채팅방에서 확인할 수 있습니다.", Toast.LENGTH_SHORT).show()
                     }
                     .addOnFailureListener {
                         // 메시지 전송 실패
+                        Toast.makeText(this, "메시지 전송에 실패하였습니다.", Toast.LENGTH_SHORT).show()
                     }
             }
             .addOnFailureListener {
