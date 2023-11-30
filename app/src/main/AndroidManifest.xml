@@ -25,7 +25,9 @@
         <activity android:name=".ItemList"/>
         <activity android:name=".ItemView"/>
         <activity android:name=".MessagesActivity"/>
-        <activity android:name=".ChatRoom"/>
+        <activity
+            android:name=".ChatRoom"
+            android:windowSoftInputMode="adjustPan"/>
     </application>
 
 </manifest>
