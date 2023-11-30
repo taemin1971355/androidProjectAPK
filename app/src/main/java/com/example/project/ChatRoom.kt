@@ -19,16 +19,16 @@ class ChatRoom: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
-
+        //사용자 id와 채팅방의 다른 이용자 아이디 받아옴.
+        val otheruser = intent.getStringExtra("otheruser")
+        val userEmail = intent.getStringExtra("userEmail")
         recyclerViewItems.layoutManager = LinearLayoutManager(this)
-        adapter = ChatAdapter(this, emptyList())
+        adapter = ChatAdapter(this, emptyList(), userEmail.toString())
         recyclerViewItems.adapter = adapter
 
 
 
-        //사용자 id와 채팅방의 다른 이용자 아이디 받아옴.
-        val otheruser = intent.getStringExtra("otheruser")
-        val userEmail = intent.getStringExtra("userEmail")
+
 
 
         findViewById<Button>(R.id.sendMessage).setOnClickListener {
