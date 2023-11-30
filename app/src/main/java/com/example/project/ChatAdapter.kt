@@ -63,7 +63,6 @@ class ChatAdapter(
 
         textUser.text = item.id
         textMessage.text = item.text
-        Toast.makeText(context,"${item.id} ${currentUserEmail} ${item.text}", Toast.LENGTH_SHORT).show()
         // 현재 아이템이 현재 사용자에서 온 것인지 확인
 
 // 메시지가 현재 사용자에서 온 것인지, 다른 사용자에서 온 것인지에 따라 레이아웃 설정
