@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
         android:layout_marginTop="20dp"
-        android:text="생일"
+        android:text="생년월일"
         android:textColor="#000000"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -140,7 +140,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:ems="10"
-            android:hint="Birth"
+            android:hint="Birth date"
             android:inputType="date" />
     </com.google.android.material.textfield.TextInputLayout>
 

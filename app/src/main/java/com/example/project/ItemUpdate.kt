@@ -11,6 +11,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -18,7 +19,7 @@ import com.google.firebase.ktx.Firebase
 
 //itemCreate와 코드 유사
 //아이템 처음 등록
-class ItemUpdate: AppCompatActivity() {
+class ItemUpdate : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +38,6 @@ class ItemUpdate: AppCompatActivity() {
         findViewById<EditText>(R.id.view_contentPrice).setText(price.toString())
         findViewById<TextView>(R.id.view_editText).text = text
 
-
-
         val radioGroup = findViewById<RadioGroup>(R.id.upload_sellStatus)
         when (status) {
             "판매중" -> radioGroup.check(R.id.upload_selling)
@@ -54,8 +53,8 @@ class ItemUpdate: AppCompatActivity() {
             val text = findViewById<TextView>(R.id.view_editText).text.toString()
             val sellStatus = findViewById<RadioGroup>(R.id.upload_sellStatus).checkedRadioButtonId
             var status = ""
-            when(sellStatus){
-                R.id.upload_selling-> status = "판매중"
+            when (sellStatus) {
+                R.id.upload_selling -> status = "판매중"
                 R.id.upload_selled -> status = "판매완료"
             }
             if (TextUtils.isEmpty(price)) {
@@ -63,24 +62,28 @@ class ItemUpdate: AppCompatActivity() {
                 Toast.makeText(this, "가격을 입력하세요(KRW)", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
             val itemMap = hashMapOf(
                 "title" to title,
                 "price" to price,
                 "text" to text,
                 "user" to Firebase.auth.currentUser?.email,
-                "status" to status
+                "status" to status,
+                "timestamp" to FieldValue.serverTimestamp() // Add timestamp field
             )
-            if (itemId !=null) { // Document의 ID를 자동으로 생성
+
+            if (itemId != null) {
+                // Document의 ID가 있는 경우 해당 Document를 업데이트
                 itemsCollectionRef.document(itemId).set(itemMap)
-                // itemID에 해당되는 Document가 존재하면 내용을 업데이트
-            } else { // Document의 ID를 itemID의 값으로 지정
+            } else {
+                // Document의 ID가 없는 경우 새로운 Document를 추가
                 itemsCollectionRef.add(itemMap)
             }
             finish()
         }
 
         //취소 버튼 누를 경우
-        findViewById<Button>(R.id.upload_cancel).setOnClickListener(){
+        findViewById<Button>(R.id.upload_cancel).setOnClickListener() {
             AlertDialog.Builder(this@ItemUpdate)
                 .setTitle("등록 취소")
                 .setMessage("등록을 취소하시겠습니까?")
@@ -92,8 +95,9 @@ class ItemUpdate: AppCompatActivity() {
                 .create()
                 .show()
         }
+
         //백 버튼 누를 경우
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true){
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 AlertDialog.Builder(this@ItemUpdate)
                     .setTitle("등록 취소")
@@ -108,5 +112,4 @@ class ItemUpdate: AppCompatActivity() {
             }
         })
     }
-
 }

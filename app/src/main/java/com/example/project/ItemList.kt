@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -125,7 +126,8 @@ class ItemList : AppCompatActivity() {
     }
 
     private fun fetchDataFromFirestore() {
-        itemsCollectionRef.get()
+        itemsCollectionRef.orderBy("timestamp", Query.Direction.DESCENDING)
+            .get()
             .addOnSuccessListener { result ->
                 val itemList = mutableListOf<Item>()
                 for (document in result) {
@@ -139,7 +141,9 @@ class ItemList : AppCompatActivity() {
     }
 
     private fun queryWhere(status: String) {
-        itemsCollectionRef.whereEqualTo("status", status).get()
+        itemsCollectionRef.whereEqualTo("status", status)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .get()
             .addOnSuccessListener { result ->
                 val itemList = mutableListOf<Item>()
                 for (document in result) {
@@ -151,4 +155,5 @@ class ItemList : AppCompatActivity() {
                 // Firestore에서 데이터를 가져오는데 실패한 경우 처리
             }
     }
+
 }
