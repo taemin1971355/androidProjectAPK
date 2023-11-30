@@ -23,7 +23,7 @@ class SignUp : AppCompatActivity() {
             if(id.length != 0 && pwd.length >=8 && name.length !=0 && birth.length !=0 ) {
                 val email = id.split("@")
                 val last = email[email.lastIndex]
-                if(email.lastIndex == 1 && last.contains("com")){
+                if(email.lastIndex == 1){
                     Firebase.auth.createUserWithEmailAndPassword(id.toString(),pwd.toString())
                         .addOnCompleteListener(this){
 
