@@ -23,7 +23,6 @@
         android:id="@+id/textUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/chat_bubble_right"
         android:ellipsize="end"
         android:singleLine="true"
         android:text="TextView"
