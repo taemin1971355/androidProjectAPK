@@ -34,12 +34,12 @@ class MainActivity : AppCompatActivity() {
                             startItemListActivity()
                         }
                         else{
-                            Toast.makeText(this, "아이디 or 패스워드 오류!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "아이디 또는 패스워드에 오류가 있습니다.", Toast.LENGTH_SHORT).show()
                         }
                     }
             }
             else{
-                Toast.makeText(this, "아이디 or 패스워드 공백!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "아이디 또는 패스워드에 빈칸이 있습니다.", Toast.LENGTH_SHORT).show()
             }
         }
         findViewById<Button>(R.id.sign_up).setOnClickListener(){

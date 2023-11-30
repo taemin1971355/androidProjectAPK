@@ -1,10 +1,12 @@
 package com.example.project
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -35,6 +37,8 @@ class ItemUpdate: AppCompatActivity() {
         findViewById<EditText>(R.id.view_contentPrice).setText(price.toString())
         findViewById<TextView>(R.id.view_editText).text = text
 
+
+
         val radioGroup = findViewById<RadioGroup>(R.id.upload_sellStatus)
         when (status) {
             "판매중" -> radioGroup.check(R.id.upload_selling)
@@ -54,7 +58,11 @@ class ItemUpdate: AppCompatActivity() {
                 R.id.upload_selling-> status = "판매중"
                 R.id.upload_selled -> status = "판매완료"
             }
-
+            if (TextUtils.isEmpty(price)) {
+                // 빈 칸이 있는 경우 사용자에게 알림
+                Toast.makeText(this, "가격을 입력하세요(KRW)", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             val itemMap = hashMapOf(
                 "title" to title,
                 "price" to price,

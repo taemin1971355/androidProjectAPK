@@ -32,7 +32,7 @@ class SignUp : AppCompatActivity() {
                                 finish()
                             }
                             else{
-                                Toast.makeText(this, "이미 존재하는 아이디입니다.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, "이미 존재하는 email입니다.", Toast.LENGTH_SHORT).show()
                             }
                         }
                 }
@@ -41,10 +41,10 @@ class SignUp : AppCompatActivity() {
                 }
             }
             else if(pwd.length < 8){
-                Toast.makeText(this, "PWD는 8자 이상입니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "비밀번호는 8자 이상입니다.", Toast.LENGTH_SHORT).show()
             }
             else{
-                Toast.makeText(this, "빈칸이 있습니다 채워주세요", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "빈칸이 있습니다.", Toast.LENGTH_SHORT).show()
             }
         }
         findViewById<Button>(R.id.cancel).setOnClickListener(){

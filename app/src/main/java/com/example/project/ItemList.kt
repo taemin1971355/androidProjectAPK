@@ -7,6 +7,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,12 +22,14 @@ class ItemList : AppCompatActivity() {
     private var adapter: MyAdapter? = null
     private val db: FirebaseFirestore = Firebase.firestore
     private val itemsCollectionRef = db.collection("items")
-
+    private val userEmailTextView by lazy { findViewById<TextView>(R.id.userEmail) }
     private val recyclerViewItems by lazy { findViewById<RecyclerView>(R.id.Itemrecyclerview) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_itemlist)
+        val currentUserEmail = Firebase.auth.currentUser?.email
+        userEmailTextView.text = "${currentUserEmail}님 안녕하세요."
 
         // 리싸이클러뷰 사이의 구분선
         val dividerItemDecoration = DividerItemDecoration(this, LinearLayoutManager(this).orientation)

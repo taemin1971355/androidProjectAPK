@@ -44,10 +44,8 @@ class MessagesActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener {
                 val messageList = mutableListOf<String>()
-                Log.d("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", "${it}")
 
                 for (i in it.documents){
-                    Log.d("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", i.data.toString())
                     //document의 저장되는 이름이 구매자_판매자
                     //_로 잘라서 비교
                     //그 2개중에 한개라도 있으면
@@ -62,7 +60,6 @@ class MessagesActivity : AppCompatActivity() {
                 messagesListView.adapter = adapter
                 messagesListView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
                     val text = (messageList.get(position).split("님과의 채팅방"))[0]
-                    Toast.makeText(this,"${text}", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, ChatRoom::class.java)
                     intent.putExtra("userEmail", userEmail)
                     intent.putExtra("otheruser", text)

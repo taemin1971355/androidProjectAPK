@@ -1,7 +1,9 @@
 package com.example.project
 import android.os.Bundle
+import android.text.TextUtils
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +29,12 @@ class ItemCreate : AppCompatActivity() {
             val price = findViewById<EditText>(R.id.view_contentPrice).text.toString()
             val text = findViewById<EditText>(R.id.view_editText).text.toString()
             val status = "판매중"
+            // 빈 칸 확인
+            if (TextUtils.isEmpty(title) || TextUtils.isEmpty(price) || TextUtils.isEmpty(text)) {
+                // 빈 칸이 있는 경우 사용자에게 알림
+                Toast.makeText(this, "빈 칸이 있습니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             val autoID = true
             val itemID = "1234"

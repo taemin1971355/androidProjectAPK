@@ -28,7 +28,7 @@ class ItemView: AppCompatActivity() {
 
         // 화면에 표시
         findViewById<TextView>(R.id.view_contentTitle).text = title
-        findViewById<TextView>(R.id.view_contentPrice).text = price.toString()
+        findViewById<TextView>(R.id.view_contentPrice).text = "$price KRW"
         findViewById<TextView>(R.id.view_editText).text = text
         findViewById<TextView>(R.id.view_contentUserId).text = user
         findViewById<TextView>(R.id.view_contentSale).text = status
