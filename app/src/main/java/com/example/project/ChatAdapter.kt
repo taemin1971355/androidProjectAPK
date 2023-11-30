@@ -5,13 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.QueryDocumentSnapshot
-import com.google.firebase.ktx.Firebase
 
 data class Chat(
     val id: String,
@@ -63,7 +58,6 @@ class ChatAdapter(
 
         textUser.text = item.id
         textMessage.text = item.text
-        Toast.makeText(context,"${item.id} ${currentUserEmail} ${item.text}", Toast.LENGTH_SHORT).show()
         // 현재 아이템이 현재 사용자에서 온 것인지 확인
 
 // 메시지가 현재 사용자에서 온 것인지, 다른 사용자에서 온 것인지에 따라 레이아웃 설정
