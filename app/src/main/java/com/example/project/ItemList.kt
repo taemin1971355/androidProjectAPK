@@ -123,6 +123,8 @@ class ItemList : AppCompatActivity() {
         super.onResume()
         // 다른 액티비티에서 돌아왔을 때 리사이클러뷰를 업데이트
         fetchDataFromFirestore()
+         // 스피너 초기화
+        initializeSpinner()
     }
 
     private fun fetchDataFromFirestore() {
